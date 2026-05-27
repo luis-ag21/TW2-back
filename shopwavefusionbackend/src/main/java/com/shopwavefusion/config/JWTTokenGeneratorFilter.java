@@ -29,12 +29,16 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (null != authentication) {
             SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
-            String jwt = Jwts.builder().setIssuer("ShopWaveFusion").setSubject("JWT Token")
-                    .claim("username", authentication.getName())
-                    .claim("authorities", populateAuthorities(authentication.getAuthorities()))
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date((new Date()).getTime() + 30000000))
-                    .signWith(key).compact();
+            String jwt = Jwts.builder()
+                .setIssuer("ShopWaveFusion")
+                .setSubject(authentication.getName())
+                .claim("username", authentication.getName())
+                .claim("authorities", populateAuthorities(authentication.getAuthorities()))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + 30000000))
+                .signWith(key)
+                .compact();
+                    
             response.setHeader(SecurityConstants.JWT_HEADER, jwt);
         }
 
